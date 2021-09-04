@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import AddIcon from "@material-ui/icons/Add";
+import Fab from "@material-ui/core/Fab";
+import Zoom from "@material-ui/core/Zoom";
 
 function CreateArea(props) {
   const [note, setNote] = useState({
@@ -8,6 +11,7 @@ function CreateArea(props) {
 
   function handleChange(event) {
     const { name, value } = event.target;
+
     setNote((prevNote) => {
       return {
         ...prevNote,
@@ -17,33 +21,45 @@ function CreateArea(props) {
   }
 
   function submitNote(event) {
-    //Sending back note to App.jsx
     props.onAdd(note);
-    event.preventDefault();
-    //Setting note to empty object after submitting it.
     setNote({
       title: "",
       content: "",
     });
+    event.preventDefault();
+  }
+
+  const [isExpanded, setIsExpanded] = useState(false);
+  function expand() {
+    setIsExpanded(true);
   }
 
   return (
     <div>
-      <form>
-        <input
-          onChange={handleChange}
-          value={note.title}
-          name="title"
-          placeholder="Title"
-        />
+      <form className="create-note">
+        {isExpanded && (
+          <input
+            name="title"
+            onChange={handleChange}
+            value={note.title}
+            placeholder="Title"
+          />
+        )}
+
         <textarea
+          name="content"
           onChange={handleChange}
           value={note.content}
-          name="content"
           placeholder="Take a note..."
-          rows="3"
+          rows={isExpanded ? "3" : "1"}
+          onClick={expand}
         />
-        <button onClick={submitNote}>Add</button>
+        {/* Add button */}
+        <Zoom in={isExpanded}>
+          <Fab onClick={submitNote} color="primary" aria-label="add">
+            <AddIcon />
+          </Fab>
+        </Zoom>
       </form>
     </div>
   );
